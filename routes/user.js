@@ -1,0 +1,36 @@
+const express = require("express");
+const router = express.Router();
+const _ = require("lodash");
+const { User, validate } = require("../model/user");
+const bcrypt = require("bcrypt");
+
+
+router.post("/", async (req, res) => {
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let user = await User.findOne({ email: req.body.email });
+  if (user) return res.status(400).send("User already exist.");
+
+  const { name, email, password, isAdmin } = req.body;
+  const hash = await bcrypt.hash(password, 12);
+
+  user = new User({
+    name,
+    email,
+    password: hash,
+    isAdmin
+  });
+
+  try {
+    await user.validate();
+    await user.save();
+
+    const token = user.generateToken()
+    res.header({"x-auth-key": token}).send(_.pick(user, ["name", "email"]));
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+module.exports = router;

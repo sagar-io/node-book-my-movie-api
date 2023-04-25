@@ -1,3 +1,4 @@
 {
-    "jwtPrivateKey": "jwtPrivateKeyVar"
+    "jwtPrivateKey": "jwtPrivateKeyVar",
+    "db": "bookMyMovie_db"
 }

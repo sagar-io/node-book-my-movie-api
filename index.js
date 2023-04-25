@@ -11,6 +11,7 @@ const rentals = require("./routes/rentals");
 const user = require("./routes/user");
 const auth = require("./routes/auth");
 const config = require("config");
+const cors = require('cors')
 
 if (!config.get("jwtPrivateKey")) {
   console.log("FATAL ERROR: jwtPrivateKey not defined !");
@@ -22,6 +23,7 @@ mongoose
   .then(() => console.log("connected to mongodb..."))
   .catch((err) => console.error(err.message));
 
+app.use(cors())
 app.use(express.json());
 app.use("/", home);
 app.use("/api/genres?", genre);

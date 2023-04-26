@@ -14,8 +14,7 @@ const config = require("config");
 const cors = require('cors')
 
 if (!config.get("jwtPrivateKey")) {
-  console.log("FATAL ERROR: jwtPrivateKey not defined !");
-  process.exit(1);
+  throw new Error("FATAL ERROR: jwtPrivateKey not defined !");
 }
 
 mongoose
@@ -26,15 +25,16 @@ mongoose
 app.use(cors())
 app.use(express.json());
 app.use("/", home);
-app.use("/api/genres?", genre);
-app.use("/api/customers?", customer);
+app.use("/api/genres", genre);
+app.use("/api/customers", customer);
 app.use("/api/movies", movies);
 app.use("/api/rentals", rentals);
-app.use("/api/register", user);
+app.use("/api/user", user);
 app.use("/api/auth", auth);
 require('./startup/prod')(app)
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Listening on Port ${PORT}...`));
-module.exports = mongoose;
+const server = app.listen(PORT, () => console.log(`Listening on Port ${PORT}...`));
+
+module.exports = server
